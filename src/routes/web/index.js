@@ -3,7 +3,7 @@ const express = require('express');
 const httpErrors = require('http-errors');
 const { securityConfig } = require('@exzly-config');
 const { jwtHelper } = require('@exzly-helpers');
-const { authMiddleware } = require('@exzly-middlewares');
+const { authMiddleware, asyncRoute } = require('@exzly-middlewares');
 const { AuthVerifyModel, UserModel } = require('@exzly-models');
 const { createRoute } = require('@exzly-utils');
 
@@ -61,8 +61,9 @@ app.get('/sign-out', (req, res) => {
 /**
  * Verification
  */
-app.get('/verification', async (req, res, next) => {
-  try {
+app.get(
+  '/verification',
+  asyncRoute(async (req, res, next) => {
     if (req.query.token) {
       const authVerify = await AuthVerifyModel.findOne({
         where: { sha1: req.query.token },
@@ -113,10 +114,8 @@ app.get('/verification', async (req, res, next) => {
     }
 
     return res.render('web/auth/verification', { isExpired: false });
-  } catch (error) {
-    return next(error);
-  }
-});
+  }),
+);
 
 /**
  * Forgot password
@@ -139,34 +138,32 @@ app.get('/reset-password', (req, res, next) => {
 /**
  * Account overview
  */
-app.get('/account', async (req, res, next) => {
-  try {
+app.get(
+  '/account',
+  asyncRoute(async (req, res) => {
     if (!req.session.userId) {
       return res.redirect(createRoute('web', 'sign-in'));
     }
 
     const user = await UserModel.findByPk(req.session.userId);
     return res.render('web/user/account-overview', { user });
-  } catch (error) {
-    return next(error);
-  }
-});
+  }),
+);
 
 /**
  * Account setting
  */
-app.get('/account/setting', async (req, res, next) => {
-  try {
+app.get(
+  '/account/setting',
+  asyncRoute(async (req, res) => {
     if (!req.session.userId) {
       return res.redirect(createRoute('web', 'sign-in'));
     }
 
     const user = await UserModel.findByPk(req.session.userId);
     return res.render('web/user/account-setting', { user });
-  } catch (error) {
-    return next(error);
-  }
-});
+  }),
+);
 
 app.use((req, res, next) => next(httpErrors.NotFound('Page not found')));
 

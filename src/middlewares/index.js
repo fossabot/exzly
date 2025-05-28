@@ -17,6 +17,15 @@ const fileLoaderMiddleware = require('./file-loader');
 const viewEngineMiddleware = require('./view-engine');
 
 /**
+ * Async handler middleware to automatically handle errors in async route handlers.
+ * @param {ExpressMiddleware} fn - The async route handler function to be wrapped.
+ * @returns {ExpressMiddleware} - Middleware function that handles async route and catches errors.
+ */
+const asyncRoute = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+/**
  * Run validation
  *
  * @type {ExpressMiddleware}
@@ -48,6 +57,7 @@ const sessionMiddleware = session({
 });
 
 module.exports = {
+  asyncRoute,
   runValidation,
   authMiddleware,
   sessionMiddleware,

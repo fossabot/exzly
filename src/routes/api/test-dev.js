@@ -1,6 +1,7 @@
 const express = require('express');
 const { securityConfig } = require('@exzly-config');
-const { storageMiddleware } = require('@exzly-middlewares');
+const { storageMiddleware, authMiddleware } = require('@exzly-middlewares');
+require('@exzly-models');
 
 const app = express.Router();
 
@@ -47,8 +48,8 @@ app.post(
   },
 );
 
-app.post('/', (req, res) => {
-  return res.json(req.body);
+app.get('/access-token', authMiddleware.rejectUnauthorized, (req, res) => {
+  return res.json({ message: 'access token valid' });
 });
 
 module.exports = app;

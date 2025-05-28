@@ -2,7 +2,7 @@ const express = require('express');
 const { Op } = require('sequelize');
 const httpErrors = require('http-errors');
 const { UserModel } = require('@exzly-models');
-const { authMiddleware } = require('@exzly-middlewares');
+const { authMiddleware, asyncRoute } = require('@exzly-middlewares');
 const { createRoute } = require('@exzly-utils');
 
 const app = express.Router();
@@ -64,8 +64,9 @@ app.get('/sign-out', (req, res) => {
 /**
  * Users
  */
-app.get('/users', async (req, res, next) => {
-  try {
+app.get(
+  '/users',
+  asyncRoute(async (req, res) => {
     return res.render('admin/users/index', {
       deletedCount: await UserModel.count({
         where: {
@@ -76,10 +77,8 @@ app.get('/users', async (req, res, next) => {
         paranoid: false,
       }),
     });
-  } catch (error) {
-    return next(error);
-  }
-});
+  }),
+);
 
 /**
  * Add new user
@@ -91,8 +90,9 @@ app.get('/users/add-new', (req, res) => {
 /**
  * User profile
  */
-app.get('/users/profile/:id', async (req, res, next) => {
-  try {
+app.get(
+  '/users/profile/:id',
+  asyncRoute(async (req, res, next) => {
     const user = await UserModel.findByPk(req.params.id);
 
     if (!user) {
@@ -100,16 +100,15 @@ app.get('/users/profile/:id', async (req, res, next) => {
     }
 
     return res.render('admin/users/profile', { user });
-  } catch (error) {
-    return next(error);
-  }
-});
+  }),
+);
 
 /**
  * User profile
  */
-app.get('/users/profile/:id/edit', async (req, res, next) => {
-  try {
+app.get(
+  '/users/profile/:id/edit',
+  asyncRoute(async (req, res, next) => {
     const user = await UserModel.findByPk(req.params.id);
 
     if (!user) {
@@ -117,34 +116,30 @@ app.get('/users/profile/:id/edit', async (req, res, next) => {
     }
 
     return res.render('admin/users/edit', { user });
-  } catch (error) {
-    return next(error);
-  }
-});
+  }),
+);
 
 /**
  * User account
  */
-app.get('/account', async (req, res, next) => {
-  try {
+app.get(
+  '/account',
+  asyncRoute(async (req, res) => {
     const user = await UserModel.findByPk(req.session.userId);
     return res.render('admin/account/index', { user });
-  } catch (error) {
-    return next(error);
-  }
-});
+  }),
+);
 
 /**
  * User account setting
  */
-app.get('/account/setting', async (req, res, next) => {
-  try {
+app.get(
+  '/account/setting',
+  asyncRoute(async (req, res) => {
     const user = await UserModel.findByPk(req.session.userId);
     return res.render('admin/account/setting', { user });
-  } catch (error) {
-    return next(error);
-  }
-});
+  }),
+);
 
 app.use((req, res, next) => next(httpErrors.NotFound('Page not found')));
 

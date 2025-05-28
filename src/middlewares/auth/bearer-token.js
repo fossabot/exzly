@@ -17,7 +17,7 @@ module.exports = [
   header('authorization').custom(async (value, { req }) => {
     if (value) {
       try {
-        const [type, token] = value.split(' ') ?? [];
+        const [type, token] = value.split(' ');
 
         if (type !== 'Bearer') {
           throw new Error('Invalid token');
