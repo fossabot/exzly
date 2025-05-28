@@ -1,0 +1,62 @@
+{% extends "admin/layout.njk" %}
+
+{% block page_title %} Example Table | {{ app_name }} {% endblock page_title %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Example Table</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{ adminRoute() }}">Home</a></li>
+            <li class="breadcrumb-item active">Example Table</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card-header px-1">
+            <a href="{{ adminRoute('/example/add-new') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Add new</a>
+            <div class="card-tools">
+              {% if getQueryParams('in-trash') === 'true' %}
+              <a href="{{ adminRoute('/example') }}" class="btn btn-sm btn-warning">
+                <i class="fas fa-arrow-left"></i> Go back
+              </a>
+              {% else %}
+              <a href="{{ adminRoute('/example?in-trash=true') }}" class="btn btn-sm btn-warning">
+                <span class="badge bg-navy right" id="deleted-user-count">{{ deletedCount }}</span>
+                Deleted
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="col-12 card py-3 px-3">
+          <table id="example-table" class="table table-bordered table-hover table-striped" style="width:100%">
+            <thead>
+              <th class="text-center">Seq</th>
+              <th>Col-1</th>
+              <th>Col-2</th>
+              <th>Col-3</th>
+              <th>Col-4</th>
+              <th>Col-5</th>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block page_script %}
+{% endblock page_script %}

@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'monthly'
+    target-branch: 'develop'
+    ignore:
+      - dependency-name: 'chokidar'
+        versions: ['>=4.0.0']
+
+      - dependency-name: 'express'
+        versions: ['>=5.0.0']
+
+      - dependency-name: 'mime'
+        versions: ['>=4.0.0']
+
+      - dependency-name: '@types/express'
+        versions: ['>=5.0.0']
+
+      - dependency-name: '@types/mime'
+        versions: ['>=2.0.0']

@@ -1,0 +1,8 @@
+node_modules/
+coverage/
+sessions/
+storage/
+notes/
+logs/
+.env
+*.bak.*

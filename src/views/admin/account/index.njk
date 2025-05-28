@@ -1,0 +1,76 @@
+{% extends "admin/layout.njk" %}
+
+{% block page_title %} User Account | {{ app_name }} {% endblock page_title %}
+
+{% block page_style %}
+<link rel="stylesheet" href="/public/assets/Fancyapps/fancybox/fancybox.css" />
+{% endblock page_style %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">User Account</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{ adminRoute() }}">Home</a></li>
+            <li class="breadcrumb-item active">User Account</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card card-primary card-outline">
+            <div class="card-body box-profile">
+              <div class="text-center">
+                {% if user.photoProfile %}
+                <a href="{{ user.photoProfile }}" data-fancybox data-caption="{{ user.fullName }}">
+                  <img class="profile-user-img img-fluid img-circle" src="{{ user.photoProfile }}?height=100&width=100" alt="User profile picture" style="width: 100px; height: 100px; object-fit: cover;" />
+                </a>
+                {% else %}
+                <img class="profile-user-img img-fluid img-circle" src="/public/assets/adminLTE-3.2.0/img/user-placeholder-128x128.png" alt="User profile picture" style="width: 100px; height: 100px; object-fit: cover;" />
+                {% endif %}
+              </div>
+              <h3 class="profile-username text-center">{{ user.fullName }}</h3>
+              <p class="text-muted text-center">
+                {% if user.isAdmin %} Administrator {% else %} Member {% endif %}
+              </p>
+              <ul class="list-group list-group-unbordered mb-3">
+                <li class="list-group-item">
+                  <b>Email</b> <a class="float-right">{{ user.email }}</a>
+                </li>
+                <li class="list-group-item">
+                  <b>Username</b> <a class="float-right">{{ user.username }}</a>
+                </li>
+                <li class="list-group-item">
+                  <b>Gender</b>
+                  <a class="float-right">
+                    {% if user.gender %} {{ user.gender }} {% else %} - {% endif %}
+                  </a>
+                </li>
+              </ul>
+              <a href="{{ adminRoute('/account/setting') }}" class="btn btn-primary btn-block"><b>Setting</b></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block page_script %}
+<script src="/public/assets/Fancyapps/fancybox/fancybox.umd.js"></script>
+<script type="text/javascript" nonce="{{ nonce }}">
+jQuery(() => {
+  Fancybox.bind('[data-fancybox]');
+});
+</script>
+{% endblock page_script %}

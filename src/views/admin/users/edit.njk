@@ -1,0 +1,360 @@
+{% extends "admin/layout.njk" %}
+
+{% block page_title %} Edit User | {{ app_name }} {% endblock page_title %}
+
+{% block page_style %}
+<link rel="stylesheet" href="/public/assets/cropperjs-1.6.2/cropper.min.css">
+<style type="text/css">
+#crop-image {
+  max-width: 100%;
+  height: auto;
+}
+
+.cropper-container {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.cropper-crop, .cropper-drag-box, .cropper-modal {
+  max-width: 100% !important;
+  overflow: hidden;
+}
+</style>
+{% endblock page_style %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Edit User</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{ adminRoute() }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ adminRoute('/users') }}">Users</a></li>
+            <li class="breadcrumb-item active">Edit User</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card">
+                <div class="card-body justify-content-center" id="crop-preview">
+                  {% if user.photoProfile %}
+                    <center>
+                      <img src="{{ user.photoProfile }}" alt="User image" id="crop-image" class="center">
+                    </center>
+                    {% else %}
+                    <center>
+                      <img src="/public/assets/adminLTE-3.2.0/img/user-placeholder-128x128.png" alt="User image" id="crop-image" class="center">
+                    </center>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12">
+              <form class="card" id="account-photo">
+                <div class="card-header">
+                  <h3 class="card-title">Change Profile Photo</h3>
+                </div>
+                <div class="card-body justify-content-center">
+                  <input type="file" name="user-photo" class="form-control">
+                </div>
+                <div class="card-footer">
+                  <button type="button" class="btn btn-sm btn-primary" id="cancel-profile-photo">Cancel</button>
+                  <button type="submit" class="btn btn-sm btn-success float-right">Save Changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="row">
+            <div class="col-lg-12">
+              <form class="card" id="account-information">
+                <div class="card-header">
+                  <h3 class="card-title">Account Information</h3>
+                </div>
+                <div class="card-body row">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label for="user-full-name">Full name</label>
+                      <input type="text" class="form-control" id="user-fullName" name="fullName" placeholder="Enter full name" value="{{ user.fullName }}">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group clearfix">
+                      <label>Gender</label>
+                      <div class="row" id="user-gender">
+                        <div class="col-12 mt-2">
+                          <div class="icheck-primary d-inline mx-2">
+                            <input type="radio" id="gender-male" name="gender" value="male" {{ "checked" if user.gender === "male" }}>
+                            <label for="gender-male">Male</label>
+                          </div>
+                          <div class="icheck-primary d-inline mx-2">
+                            <input type="radio" id="gender-female" name="gender" value="female" {{ "checked" if user.gender === "female" }}>
+                            <label for="gender-female">Female</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <button type="submit" class="btn btn-sm btn-success">Save Changes</button>
+                </div>
+              </form>
+            </div>
+            <div class="col-lg-12">
+              <form class="card" id="account-credentials">
+                <div class="card-header">
+                  <h3 class="card-title">Account Credentials</h3>
+                </div>
+                <div class="card-body row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label for="user-email">Email address</label>
+                      <input type="text" class="form-control" id="user-email" placeholder="Enter email" value="{{ user.email }}">
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label for="user-username">Username</label>
+                      <input type="text" class="form-control" id="user-username" placeholder="Enter username" value="{{ user.username }}">
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <label for="user-newPassword">New password</label>
+                    <div class="input-group mb-3">
+                      <input id="user-newPassword" type="password" class="form-control" placeholder="New password" autocomplete="off">
+                      <div class="input-group-append password-toggle" style="cursor: pointer;">
+                        <div class="input-group-text input-group-icon" style="max-width: 38px; justify-content: center; align-items: center;">
+                          <span class="fas fa-eye-slash"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <label for="user-confirmPassword">Confirm new password</label>
+                    <div class="input-group mb-3">
+                      <input id="user-confirmPassword" type="password" class="form-control" placeholder="Confirm new password" autocomplete="off">
+                      <div class="input-group-append password-toggle" style="cursor: pointer;">
+                        <div class="input-group-text input-group-icon" style="max-width: 38px; justify-content: center; align-items: center;">
+                          <span class="fas fa-eye-slash"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <button type="submit" class="btn btn-sm btn-success">Save Changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block page_script %}
+<script src="/public/assets/cropperjs-1.6.2/cropper.min.js"></script>
+<script src="/public/assets/jquery-cropper-1.0.2/jquery-cropper.min.js"></script>
+<script type="text/javascript" nonce="{{ nonce }}">
+jQuery(() => {
+  const cropImage = $('#crop-image');
+
+  $('input[name="user-photo"]').on('change', function (event) {
+    const file = event.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        cropImage.cropper('destroy');
+        cropImage.attr('src', e.target.result);
+        cropImage.cropper({
+          viewMode: 2,
+          aspectRatio: 1,
+          checkOrientation: false,
+        });
+      };
+
+      reader.readAsDataURL(file);
+    }
+  });
+
+  $('#cancel-profile-photo').on('click', function (e) {
+    e.preventDefault();
+    cropImage.cropper('destroy');
+    cropImage.attr('src', '{{ user.photoProfile }}');
+    $('input[name="user-photo"]').val('');
+  })
+
+  /**
+   * Update account photo
+   */
+  $('form#account-photo').on('submit', function (e) {
+    e.preventDefault();
+
+    cropImage.cropper({
+      viewMode: 2,
+      aspectRatio: 1,
+      checkOrientation: false,
+    });
+
+    const cropper = cropImage.data('cropper');
+    const croppedCanvas = cropper.getCroppedCanvas();
+
+    if (croppedCanvas === null) {
+      cropImage.cropper('destroy');
+      SwalToast('top-end', 2000).fire({
+        icon: 'error',
+        text: 'Please select a photo to upload',
+      });
+
+      return;
+    }
+
+    croppedCanvas.toBlob((blob) => {
+      const formData = new FormData();
+      formData.append('photo', blob, 'profile.png');
+
+      $.ajax({
+        url: '/api/users/profile/{{ user.id }}/photo',
+        method: 'PUT',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (result) {
+          cropImage.cropper('destroy');
+          cropImage.attr('src', result.photoProfile);
+          $('.display-user-photoProfile').attr('src', `${result.photoProfile}?height=100&width=100`);
+          $('input[name="user-photo"]').val('');
+
+          SwalToast('top-end', 2000).fire({
+            icon: 'success',
+            text: 'Photo profile changed successfuly',
+          });
+        },
+        error: function (error) {
+          cropImage.cropper('destroy');
+          SwalToast('top-end', 2000).fire({
+            icon: 'error',
+            text: error.responseJSON?.message || 'Please try again later',
+          });
+        }
+      });
+    });
+  });
+
+  /**
+   * Update account information
+   */
+  $('form#account-information').on('submit', function (e) {
+    e.preventDefault();
+
+    setFormDisabled(true, '#account-information');
+    $('#account-information input').removeClass('is-invalid');
+    $('#account-information .error.invalid-feedback').remove();
+
+    const gender = $('input[name="gender"]:checked').val();
+    const fullName = $('#user-fullName').val();
+
+    $.ajax({
+      method: 'PUT',
+      url: '/api/users/profile/{{ user.id }}',
+      data: { gender, fullName },
+      success: () => {
+        SwalToast('top-end', 2000).fire({
+          icon: 'success',
+          text: 'Account information updated',
+        });
+
+        $('.display-user-fullName').text(fullName);
+        setFormDisabled(false, '#account-information');
+      },
+      error: (error) => {
+        setFormDisabled(false, '#account-information');
+        if (error.responseJSON?.statusCode === 400) {
+          error.responseJSON.data.map((item) => {
+            const inputElement = $(`#user-${item.path}`);
+            inputElement.addClass('is-invalid');
+            inputElement
+              .parent()
+              .append(`<span class="error invalid-feedback">${item.message}</span>`);
+            return true;
+          });
+        }
+
+        SwalToast('top-end', 2000).fire({
+          icon: 'error',
+          title: 'Failed to update account information',
+          text: error.responseJSON?.message || 'Please try again later',
+        });
+      }
+    });
+  });
+
+  /**
+   * Update account credentials
+   */
+   $('form#account-credentials').on('submit', function (e) {
+    e.preventDefault();
+
+    setFormDisabled(true, '#account-credentials');
+    $('#account-credentials input').removeClass('is-invalid');
+    $('#account-credentials .error.invalid-feedback').remove();
+
+    const email = $('#user-email').val();
+    const username = $('#user-username').val();
+    const newPassword = $('#user-newPassword').val().length > 0 ? $('#user-newPassword').val() : undefined;
+    const confirmPassword = $('#user-confirmPassword').val().length > 0 ? $('#user-confirmPassword').val() : undefined;
+
+    $.ajax({
+      method: 'PUT',
+      url: '/api/users/credentials/{{ user.id }}',
+      data: { email, username, newPassword, confirmPassword },
+      success: () => {
+        $('#user-newPassword').val('');
+        $('#user-confirmPassword').val('');
+        setFormDisabled(false, '#account-credentials');
+
+        SwalToast('top-end', 2000).fire({
+          icon: 'success',
+          text: 'Account credential updated successfuly',
+        });
+      },
+      error: (error) => {
+        setFormDisabled(false, '#account-credentials');
+        if (error.responseJSON?.statusCode === 400) {
+          error.responseJSON.data.map((item) => {
+            const inputElement = $(`#user-${item.path}`);
+            inputElement.addClass('is-invalid');
+            inputElement
+              .parent()
+              .append(`<span class="error invalid-feedback">${item.message}</span>`);
+            return true;
+          });
+        }
+      }
+    });
+  });
+
+  $('.password-toggle').on('click', function (e) {
+    e.preventDefault();
+    showHidePassword(this);
+  });
+});
+</script>
+{% endblock page_script %}
