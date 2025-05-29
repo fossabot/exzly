@@ -5,6 +5,9 @@
 <h1 align="center">Exzly</h1>
 <h4 align="center">Enterprise-Grade Starter Kit for Express.js Monolithic Applications</h4>
 
+[![CI/CD Test and Deploy](https://github.com/agoenks29D/exzly/actions/workflows/ci-cd-test-deploy.yml/badge.svg)](https://github.com/agoenks29D/exzly/actions/workflows/ci-cd-test-deploy.yml)
+[![codecov](https://codecov.io/gh/agoenks29D/exzly/graph/badge.svg?token=TO3BEL66OB)](https://codecov.io/gh/agoenks29D/exzly)
+
 ## 📖 Description
 
 **Exzly is an enterprise-grade starter kit for Express.js Monolithic Applications**, designed to help teams build scalable, maintainable monolithic apps — **fast and smart**.
