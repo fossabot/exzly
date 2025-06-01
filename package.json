@@ -103,7 +103,7 @@
     "@types/sequelize": "^4.28.20",
     "@types/session-file-store": "^1.2.5",
     "@types/uuid": "^10.0.0",
-    "eslint": "^9.27.0",
+    "eslint": "^9.28.0",
     "form-data": "^4.0.2",
     "globals": "^16.2.0",
     "husky": "^9.1.7",
@@ -111,6 +111,6 @@
     "lint-staged": "^16.1.0",
     "prettier": "3.5.3",
     "sequelize-cli": "^6.6.3",
-    "supertest": "^7.1.0"
+    "supertest": "^7.1.1"
   }
 }
