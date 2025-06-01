@@ -1,7 +1,8 @@
 const request = require('supertest');
 const { faker } = require('@faker-js/faker');
+const { securityConfig } = require('@exzly-config');
 const app = require('@exzly-routes');
-const { createRoute } = require('@exzly-utils');
+const { createRoute, randomInt } = require('@exzly-utils');
 
 /**
  * Generate username
@@ -199,6 +200,115 @@ describe('RESTful-API: Authentication', () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ refreshToken })
         .expect(200);
+    });
+  });
+});
+
+describe('RESTful-API: Authentication - Rate limiter', () => {
+  const { rateLimit } = securityConfig;
+
+  describe('Sign up rate limiter', () => {
+    const requests = [];
+    const limit = rateLimit.maxSignUpAttempts;
+    const overLimit = 3;
+
+    it('should return 429 after exceeding max sign-up attempts', async () => {
+      for (let i = 0; i < limit + overLimit; i++) {
+        const sexType = faker.person.sexType();
+        const firstName = faker.person.firstName(sexType);
+        const lastName = faker.person.lastName(sexType);
+        const fullName = faker.person.fullName({ firstName, lastName, sex: sexType });
+        const email = faker.internet.email({ firstName, lastName }).toLowerCase();
+        const username = generateUsername(firstName, lastName);
+
+        requests.push(
+          request(app)
+            .post(createRoute('api', '/auth/sign-up'))
+            .set('X-Forwarded-For', '123.123.123.123')
+            .send({
+              email,
+              username,
+              password: 'password',
+              fullName,
+            }),
+        );
+      }
+
+      const responses = await Promise.all(requests);
+      const successCount = responses.filter((res) => res.statusCode === 201).length;
+      const rateLimitedCount = responses.filter((res) => res.statusCode === 429).length;
+
+      expect(successCount).toBeLessThanOrEqual(limit);
+      expect(rateLimitedCount).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Sign in rate limiter', () => {
+    const requests = [];
+    const limit = rateLimit.maxSignInAttempts;
+    const overLimit = 3;
+
+    it('should return 429 after exceeding max sign-in attempts', async () => {
+      for (let i = 0; i < limit + overLimit; i++) {
+        requests.push(
+          request(app)
+            .post(createRoute('api', '/auth/sign-in'))
+            .set('X-Forwarded-For', '123.123.123.123')
+            .send({
+              identity: 'someuser',
+              password: 'wrongpassword',
+            }),
+        );
+      }
+
+      const responses = await Promise.all(requests);
+      const rateLimitedCount = responses.filter((res) => res.statusCode === 429).length;
+
+      expect(rateLimitedCount).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Forgot password rate limiter', () => {
+    const requests = [];
+    const limit = rateLimit.maxForgotPasswordAttempts;
+    const overLimit = 3;
+
+    it('should return 429 after exceeding max forgot-password attempts', async () => {
+      for (let i = 0; i < limit + overLimit; i++) {
+        requests.push(
+          request(app)
+            .post(createRoute('api', '/auth/forgot-password'))
+            .set('X-Forwarded-For', '123.123.123.123')
+            .send({ identity: 'nonexistentuser' }),
+        );
+      }
+
+      const responses = await Promise.all(requests);
+      const rateLimitedCount = responses.filter((res) => res.statusCode === 429).length;
+
+      expect(rateLimitedCount).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Verification code rate limiter', () => {
+    const requests = [];
+    const limit = rateLimit.maxVerificationAttempts;
+    const overLimit = 3;
+
+    it('should return 429 after exceeding max verification code attempts', async () => {
+      for (let i = 0; i < limit + overLimit; i++) {
+        requests.push(
+          request(app)
+            .post(createRoute('api', '/auth/verification'))
+            .set('X-Forwarded-For', '123.123.123.123')
+            .send({ code: randomInt(1, 10, 6) }),
+        );
+      }
+
+      const responses = await Promise.all(requests);
+      const rateLimitedCount = responses.filter((res) => res.statusCode === 429).length;
+
+      expect(rateLimitedCount).toBeGreaterThan(0);
     });
   });
 });
