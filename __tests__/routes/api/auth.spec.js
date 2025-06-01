@@ -1,6 +1,7 @@
 const request = require('supertest');
 const { faker } = require('@faker-js/faker');
 const { securityConfig } = require('@exzly-config');
+const { AuthVerifyModel } = require('@exzly-models');
 const app = require('@exzly-routes');
 const { createRoute, randomInt } = require('@exzly-utils');
 
@@ -175,6 +176,24 @@ describe('RESTful-API: Authentication', () => {
     });
   });
 
+  describe('Verification test', () => {
+    it('should return 400 when the verification code is invalid', async () => {
+      await request(app)
+        .post(createRoute('api', '/auth/verification'))
+        .send({ code: randomInt(1, 10, 6) })
+        .expect(400);
+    });
+  });
+
+  describe('Reset password test', () => {
+    it('should return 400 when the reset token is invalid', async () => {
+      await request(app)
+        .post(createRoute('api', '/auth/reset-password'))
+        .send({ token: 'invalid token' })
+        .expect(400);
+    });
+  });
+
   describe('Sign out test', () => {
     it('test 1: should return 400 when no refresh token is sent', async () => {
       await request(app).post(createRoute('api', '/auth/sign-out')).expect(400);
@@ -200,6 +219,67 @@ describe('RESTful-API: Authentication', () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ refreshToken })
         .expect(200);
+    });
+  });
+});
+
+describe('RESTful-API: Authentication - Account recovery', () => {
+  const memberUserId = 2;
+  let resetPasswordCode, resetPasswordToken;
+
+  describe('Valid account recovery test', () => {
+    it('test 1: should return 200 when identity exists', async () => {
+      await request(app)
+        .post(createRoute('api', '/auth/forgot-password'))
+        .send({ identity: 'member' })
+        .expect(200);
+    });
+
+    it('test 2: should return 200 when verification code is valid', async () => {
+      const authVerify = await AuthVerifyModel.findOne({
+        where: { userId: memberUserId },
+        order: [['createdAt', 'DESC']],
+      });
+
+      if (authVerify) {
+        resetPasswordCode = authVerify.code;
+        const response = await request(app)
+          .post(createRoute('api', '/auth/verification'))
+          .send({ code: resetPasswordCode })
+          .expect(200);
+
+        resetPasswordToken = response.body.token;
+      }
+    });
+
+    it('test 3: should return 200 when reset-password token is valid', async () => {
+      await request(app)
+        .post(createRoute('api', '/auth/reset-password'))
+        .send({ token: resetPasswordToken, newPassword: 'member', confirmPassword: 'member' })
+        .expect(200);
+    });
+  });
+
+  describe('Invalid account recovery test', () => {
+    it('test 1: should return 400 when verification code is reused', async () => {
+      await request(app)
+        .post(createRoute('api', '/auth/verification'))
+        .send({ code: resetPasswordCode })
+        .expect(400);
+    });
+
+    it('test 2: should return 400 when reset-password token is invalid', async () => {
+      await request(app)
+        .post(createRoute('api', '/auth/reset-password'))
+        .send({ token: 'invalid token', newPassword: 'member', confirmPassword: 'member' })
+        .expect(400);
+    });
+
+    it('test 2: should return 400 when reset-password token is reused', async () => {
+      await request(app)
+        .post(createRoute('api', '/auth/reset-password'))
+        .send({ token: resetPasswordToken, newPassword: 'member', confirmPassword: 'member' })
+        .expect(400);
     });
   });
 });
