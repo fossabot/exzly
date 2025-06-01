@@ -12,7 +12,7 @@ const allowedImageMimeTypes = ['image/png', 'image/jpeg', 'image/heic', 'image/h
  *
  * @type {string}
  */
-const refreshTokenExpires = '7d'; // default: 7 days
+const refreshTokenExpires = process.env.REFRESH_TOKEN_EXPIRES || '7d'; // default: 7 days
 
 /**
  * Password reset expiration time.
@@ -20,7 +20,7 @@ const refreshTokenExpires = '7d'; // default: 7 days
  *
  * @type {string}
  */
-const passwordResetExpires = '10m'; // default: 10 minutes
+const passwordResetExpires = process.env.PASSWORD_RESET_EXPIRES || '10m'; // default: 10 minutes
 
 /**
  * Rate limit configuration.
