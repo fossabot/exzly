@@ -72,7 +72,7 @@ jobs:
           # Security: JWT
           echo "JWT_SECRET = ${{ secrets.JWT_SECRET }}" >> .env
           echo "JWT_EXPIRATION = ${{ secrets.JWT_EXPIRATION }}" >> .env
-          echo "REFRESH_TOKEN_EXPIRES = 1m >> .env
+          echo "REFRESH_TOKEN_EXPIRES = 1m" >> .env
           echo "PASSWORD_RESET_EXPIRES = 1m" >> .env
 
           # SMTP
