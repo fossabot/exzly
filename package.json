@@ -12,6 +12,9 @@
   ],
   "author": "Agung Dirgantara <agungmasda29@gmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "node main.js",
     "start:dev": "nodemon",
