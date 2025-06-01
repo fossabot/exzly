@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const qs = require('qs');
 const request = require('supertest');
 const app = require('@exzly-routes');
 const { createRoute } = require('@exzly-utils');
@@ -193,11 +194,10 @@ describe('RESTful-API: Users', () => {
         size: 20,
         _: Date.now(),
       };
-
+      const queryString = qs.stringify(queryParams, { arrayFormat: 'indices' });
       const response = await request(app)
-        .get(createRoute('api', '/users'))
+        .get(createRoute('api', '/users') + '?' + queryString)
         .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
-        .query(queryParams)
         .expect(200);
 
       // Verify the structure of the response body
@@ -208,7 +208,144 @@ describe('RESTful-API: Users', () => {
       expect(response.body.data.length).toBe(20);
     });
 
-    it('test 5: should return 403 when member access token is used to access user list', async () => {
+    it('test 5: should return 200 and include only users in trash when in-trash query is true', async () => {
+      const response = await request(app)
+        .get(createRoute('api', '/users'))
+        .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
+        .query({ 'in-trash': true })
+        .expect(200);
+
+      // Verify the structure of the response body
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
+      expect(response.body).toHaveProperty('hasNext');
+      expect(typeof response.body.hasNext).toBe('boolean');
+    });
+
+    it('test 6: should return 200', async () => {
+      const response = await request(app)
+        .get(createRoute('api', '/users'))
+        .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
+        .query({ search: { value: 'admin', regex: false } })
+        .expect(200);
+
+      // Verify the structure of the response body
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
+      expect(response.body).toHaveProperty('hasNext');
+      expect(typeof response.body.hasNext).toBe('boolean');
+    });
+
+    it('test 7: should return 200', async () => {
+      const response = await request(app)
+        .get(createRoute('api', '/users'))
+        .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
+        .query({ search: { value: 'admin', regex: true } })
+        .expect(200);
+
+      // Verify the structure of the response body
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
+      expect(response.body).toHaveProperty('hasNext');
+      expect(typeof response.body.hasNext).toBe('boolean');
+    });
+
+    it('test 8: should return 200', async () => {
+      const queryParams = {
+        draw: 1,
+        columns: [
+          {
+            data: 'function',
+            name: 'id',
+            searchable: false,
+            orderable: true,
+            search: {
+              value: '',
+              regex: false,
+            },
+          },
+          {
+            data: 'username',
+            name: 'username',
+            searchable: true,
+            orderable: true,
+            search: {
+              value: 'admin',
+              regex: true,
+            },
+          },
+          {
+            data: 'gender',
+            name: 'gender',
+            searchable: false,
+            orderable: true,
+            search: {
+              value: 'male',
+              regex: false,
+            },
+          },
+          {
+            data: 'fullName',
+            name: 'fullName',
+            searchable: true,
+            orderable: true,
+            search: {
+              value: 'admin',
+              regex: false,
+            },
+          },
+          {
+            data: 'createdAt',
+            name: 'createdAt',
+            searchable: false,
+            orderable: true,
+            search: {
+              value: '',
+              regex: false,
+            },
+          },
+          {
+            data: 'id',
+            name: 'id',
+            searchable: false,
+            orderable: false,
+            search: {
+              value: '',
+              regex: false,
+            },
+          },
+        ],
+        order: [
+          {
+            column: 0,
+            dir: 'asc',
+            name: 'id',
+          },
+        ],
+        start: 0,
+        length: 10,
+        search: {
+          value: '',
+          regex: false,
+        },
+        skip: 0,
+        size: 20,
+        _: Date.now(),
+      };
+      const queryString = qs.stringify(queryParams, { arrayFormat: 'indices' });
+      const response = await request(app)
+        .get(createRoute('api', '/users') + '?' + queryString)
+        .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
+        .expect(200);
+
+      // Verify the structure of the response body
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
+      expect(response.body).toHaveProperty('hasNext');
+      expect(typeof response.body.hasNext).toBe('boolean');
+    });
+
+    it('test 6: should return 403 when member access token is used to access user list', async () => {
       await request(app)
         .get(createRoute('api', '/users'))
         .set('Authorization', `Bearer ${usersToken.memberAccessToken}`)

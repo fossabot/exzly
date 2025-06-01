@@ -225,7 +225,7 @@ describe('RESTful-API: Authentication', () => {
 
 describe('RESTful-API: Authentication - Account recovery', () => {
   const memberUserId = 2;
-  let resetPasswordCode, resetPasswordToken;
+  let resetPasswordCode, resetPaswordCookie, resetPasswordToken;
 
   describe('Valid account recovery test', () => {
     it('test 1: should return 200 when identity exists', async () => {
@@ -248,11 +248,19 @@ describe('RESTful-API: Authentication - Account recovery', () => {
           .send({ code: resetPasswordCode })
           .expect(200);
 
+        resetPaswordCookie = response.headers['set-cookie'];
         resetPasswordToken = response.body.token;
       }
     });
 
-    it('test 3: should return 200 when reset-password token is valid', async () => {
+    it('test 3: should return 200 when accessing reset-password page', async () => {
+      await request(app)
+        .get(createRoute('web', 'reset-password'))
+        .set('Cookie', resetPaswordCookie)
+        .expect(200);
+    });
+
+    it('test 4: should return 200 when reset-password token is valid', async () => {
       await request(app)
         .post(createRoute('api', '/auth/reset-password'))
         .send({ token: resetPasswordToken, newPassword: 'member', confirmPassword: 'member' })

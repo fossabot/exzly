@@ -34,6 +34,24 @@ describe('Web Routes', () => {
     it('test 4: should return 200 when accessing forgot-password page', async () => {
       await request(app).get(createRoute('web', 'forgot-password')).expect(200);
     });
+
+    it('test 5: should return 200 when accessing verification-code page', async () => {
+      await request(app).get(createRoute('web', 'verification')).expect(200);
+    });
+
+    it('test 6: should return 400 when accessing verification-code page', async () => {
+      await request(app)
+        .get(createRoute('web', 'verification'))
+        .query({ token: 'invalid' })
+        .expect(400);
+    });
+
+    it('test 7: should return 400 when accessing verification-code page', async () => {
+      await request(app)
+        .get(createRoute('web', 'verification'))
+        .query({ token: 'invalid' })
+        .expect(400);
+    });
   });
 
   describe('Authenticated pages', () => {
