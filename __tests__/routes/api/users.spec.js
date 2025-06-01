@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const request = require('supertest');
 const app = require('@exzly-routes');
 const { createRoute } = require('@exzly-utils');
@@ -405,6 +407,24 @@ describe('RESTful-API: Users', () => {
         .query({ remove: true })
         .expect(404);
     });
+
+    it('test 4: should return 200 when admin removes user profile photo', async () => {
+      await request(app)
+        .put(createRoute('api', `/users/profile/1/photo`))
+        .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
+        .query({ remove: true })
+        .expect(200);
+    });
+
+    it('test 5: should return 200 when admin uploads a new user profile photo', async () => {
+      const filePath = path.join(__dirname, '200x200.png');
+      const file = fs.createReadStream(filePath);
+      await request(app)
+        .put(createRoute('api', `/users/profile/1/photo`))
+        .attach('photo', file, '200x200.png')
+        .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
+        .expect(200);
+    });
   });
 
   describe('Restore user account', () => {
@@ -485,6 +505,16 @@ describe('RESTful-API: Users', () => {
         .put(createRoute('api', `/users/credentials/${memberProfile.id}`))
         .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
         .send({ username: 'member' })
+        .expect(200);
+    });
+
+    it('test 5: should return 200 when admin updates member email address', async () => {
+      const newEmail = 'new-member@exzly.dev';
+
+      await request(app)
+        .put(createRoute('api', `/users/credentials/${memberProfile.id}`))
+        .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
+        .send({ email: newEmail })
         .expect(200);
     });
   });
