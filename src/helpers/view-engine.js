@@ -31,8 +31,8 @@ const getQueryParams = (req, key = undefined) => {
  * @returns {string[]}
  */
 const uriSegments = (req) => {
-  const reqParams = req.originalUrl;
-  return reqParams.split('/').filter((value) => value.trim() !== '');
+  const uriSegments = req.originalUrl.replace(/\?.*$/, '');
+  return uriSegments.split('/').filter((value) => value.trim() !== '');
 };
 
 /**
@@ -44,11 +44,10 @@ const uriSegments = (req) => {
  * @returns {boolean} True if the URI segment matches the given text, otherwise false.
  */
 const uriSegmentMatches = (req, text, num = 0) => {
-  const reqParams = req.originalUrl;
-  const filtered = reqParams.split('/').filter((value) => value.trim() !== '');
+  const filteredUriSegments = uriSegments(req);
 
-  if (filtered.length > 0) {
-    return filtered[num] === text;
+  if (filteredUriSegments.length > 0) {
+    return filteredUriSegments[num] == text;
   }
 
   return false;
