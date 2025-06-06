@@ -112,21 +112,21 @@ module.exports = (sequelize, DataTypes) => {
       email: {
         type: DataTypes.STRING,
         set(value) {
-          this.setDataValue('email', value ? value.toLowerCase() : null);
+          this.setDataValue('email', value?.toLowerCase());
         },
         allowNull: false,
       },
       username: {
         type: DataTypes.STRING(30),
         set(value) {
-          this.setDataValue('username', value ? value.toLowerCase() : null);
+          this.setDataValue('username', value?.toLowerCase());
         },
         allowNull: false,
       },
       password: {
         type: DataTypes.STRING,
         set(value) {
-          this.setDataValue('password', value ? SHA1(value).toString() : null);
+          this.setDataValue('password', SHA1(value).toString());
         },
         allowNull: false,
       },
