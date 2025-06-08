@@ -1,4 +1,4 @@
-name: CI/CD Test and Deploy
+name: CI - Setup, Test & Coverage
 
 on:
   push:
