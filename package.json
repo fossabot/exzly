@@ -16,7 +16,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "start": "node main.js",
+    "start": "node --experimental-vm-modules --no-warnings main.js",
     "start:dev": "nodemon",
     "db:demo": "sequelize-cli db:migrate --name base.js && sequelize-cli db:seed --seed demo",
     "db:start": "sequelize-cli db:migrate --name base.js && sequelize-cli db:seed --seed start",
@@ -25,9 +25,9 @@
     "lint": "eslint .",
     "format": "prettier --write --ignore-unknown .",
     "prepare": "husky",
-    "test": "node --experimental-vm-modules --trace-warnings ./node_modules/jest/bin/jest --verbose --detectOpenHandles",
-    "test:cov": "node --experimental-vm-modules --trace-warnings ./node_modules/jest/bin/jest --coverage --verbose --detectOpenHandles",
-    "test:watch": "node --experimental-vm-modules --trace-warnings ./node_modules/jest/bin/jest --watch --verbose --detectOpenHandles"
+    "test": "node --experimental-vm-modules --no-warnings ./node_modules/jest/bin/jest --verbose --detectOpenHandles",
+    "test:cov": "node --experimental-vm-modules --no-warnings ./node_modules/jest/bin/jest --coverage --verbose --detectOpenHandles",
+    "test:watch": "node --experimental-vm-modules --no-warnings ./node_modules/jest/bin/jest --watch --verbose --detectOpenHandles"
   },
   "lint-staged": {
     "*.{js,json}": [

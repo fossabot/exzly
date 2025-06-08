@@ -1,4 +1,12 @@
 {
-  "exec": "node --experimental-modules --trace-warnings main.js",
-  "ignore": ["./coverage", "./database", "./storage", "./sessions", "./public", "./notes", "__tests__"]
+  "exec": "node --experimental-modules --no-warnings main.js",
+  "ignore": [
+    "./coverage",
+    "./database",
+    "./storage",
+    "./sessions",
+    "./public",
+    "./notes",
+    "__tests__"
+  ]
 }
