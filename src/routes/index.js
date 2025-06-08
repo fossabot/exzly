@@ -51,7 +51,11 @@ app.use(sessionMiddleware, viewEngineMiddleware(app));
  * Global middleware
  */
 app.use(cors());
-app.use(morgan('dev'));
+app.use(
+  morgan('dev', {
+    skip: () => process.env.NODE_ENV !== 'development',
+  }),
+);
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -62,6 +66,7 @@ app.use('/storage/user-photos/:file', fileLoaderMiddleware.imageLoader.diskStora
 if (process.env.NODE_ENV !== 'production') {
   app.use('/storage/:file', fileLoaderMiddleware.imageLoader.diskStorage('test'));
   app.use('/storage/:file', fileLoaderMiddleware.imageLoader.diskStorage('upload-test'));
+  app.get('/test', (req, res) => res.render('test/index'));
 }
 
 /**

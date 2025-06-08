@@ -45,21 +45,16 @@ const diskStorage = (destination = '/') => {
       }
 
       if (fs.existsSync(imagePath)) {
-        try {
-          const loadImage = sharp(imagePath);
-          const resizeImage = loadImage.resize(width, height, {
-            fit: 'inside',
-          });
+        const loadImage = sharp(imagePath);
+        const resizeImage = loadImage.resize(width, height, {
+          fit: 'inside',
+        });
 
-          // save as file
-          await resizeImage.toFile(imageRezizedFile);
+        // save as file
+        await resizeImage.toFile(imageRezizedFile);
 
-          // send response
-          return res.sendFile(imageRezizedFile);
-        } catch (e) {
-          // send error
-          return next(e);
-        }
+        // send response
+        return res.sendFile(imageRezizedFile);
       }
     }
 

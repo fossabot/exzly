@@ -26,12 +26,21 @@ const memoryStorage = multer({ storage: multer.memoryStorage() });
  * @param {string} fileName
  * @returns {multer.Multer}
  */
-const diskStorage = (destination, fileName) => {
+const diskStorage = (destination = '/', fileName) => {
+  let cleanDestination = path.posix.normalize(destination);
+
+  if (!cleanDestination.startsWith('/')) {
+    cleanDestination = '/' + cleanDestination;
+  }
+
+  if (cleanDestination.length > 1 && cleanDestination.endsWith('/')) {
+    cleanDestination = cleanDestination.slice(0, -1);
+  }
+
   return multer({
     storage: multer.diskStorage({
       destination: (req, file, cb) => {
-        const dest = typeof destination === 'string' ? destination : '/';
-        const target = path.join(process.env.STORAGE_PATH, dest);
+        const target = path.join(process.env.STORAGE_PATH, destination);
 
         if (!fs.existsSync(target)) {
           fs.mkdirSync(target, { recursive: true });
@@ -57,7 +66,17 @@ const diskStorage = (destination, fileName) => {
  */
 const saveToDisk = (destination = '/') => {
   return async (req, res, next) => {
-    const target = path.join(process.env.STORAGE_PATH, destination);
+    let cleanDestination = path.posix.normalize(destination);
+
+    if (!cleanDestination.startsWith('/')) {
+      cleanDestination = '/' + cleanDestination;
+    }
+
+    if (cleanDestination.length > 1 && cleanDestination.endsWith('/')) {
+      cleanDestination = cleanDestination.slice(0, -1);
+    }
+
+    const target = path.join(process.env.STORAGE_PATH, cleanDestination);
 
     if (!fs.existsSync(target)) {
       fs.mkdirSync(target, { recursive: true });
@@ -69,7 +88,6 @@ const saveToDisk = (destination = '/') => {
         const newFilePath = path.join(target, filename);
 
         await fs.promises.writeFile(newFilePath, file.buffer);
-
         req.files[index].path = newFilePath.replace(/\\/g, '/');
       });
 
@@ -78,13 +96,8 @@ const saveToDisk = (destination = '/') => {
       const filename = `${uuid.v4()}.${req.file.ext}`;
       const newFile = `${target}/${filename}`;
 
-      fs.writeFile(newFile, req.file.buffer, (err) => {
-        if (err) {
-          return next(httpErrors.InternalServerError(`Error saving file ${err.message}`));
-        }
-
-        req.file.path = '/' + newFile.replace(/\\/g, '/');
-      });
+      await fs.promises.writeFile(newFile, req.file.buffer);
+      req.file.path = '/' + newFile.replace(/\\/g, '/');
     }
 
     return next();
@@ -100,7 +113,6 @@ const saveToDisk = (destination = '/') => {
  */
 const validateFileMime = async (file, allowedMimes) => {
   const { fileTypeFromBuffer, fileTypeFromFile } = await import('file-type');
-
   let fileType;
 
   if (file.buffer) {
@@ -134,48 +146,28 @@ const validateFileMime = async (file, allowedMimes) => {
  */
 const validateFileMimes = (allowedMimes = []) => {
   return async (req, res, next) => {
-    try {
-      let validFiles = [];
+    if (req.file) {
+      const isValid = await validateFileMime(req.file, allowedMimes);
 
-      if (req.file) {
-        const isValid = await validateFileMime(req.file, allowedMimes);
-
-        if (!isValid) {
-          return next(httpErrors.BadRequest('Invalid file mime'));
-        }
-
-        validFiles.push(req.file);
+      if (!isValid) {
+        return next(httpErrors.BadRequest('Invalid file mime'));
       }
-
-      if (req.files) {
-        const fileValidations = req.files.map(async (file) => {
-          const isValid = await validateFileMime(file, allowedMimes);
-
-          if (!isValid) {
-            throw httpErrors.BadRequest('Invalid file mime');
-          }
-
-          validFiles.push(file);
-        });
-
-        try {
-          await Promise.all(fileValidations);
-        } catch (error) {
-          for (let i = 0; i < validFiles.length; i++) {
-            const file = validFiles[i];
-            if (file.path) {
-              fs.rmSync(file.path);
-            }
-          }
-
-          return next(error);
-        }
-      }
-
-      return next();
-    } catch (err) {
-      return next(err);
     }
+
+    if (req.files) {
+      const fileValidations = req.files.map((file) => validateFileMime(file, allowedMimes));
+      const validatedFiles = await Promise.all(fileValidations);
+
+      validatedFiles.map((isValid, i) => {
+        if (!isValid) {
+          req.files[i] = {
+            message: 'Invalid file mime',
+          };
+        }
+      });
+    }
+
+    return next();
   };
 };
 

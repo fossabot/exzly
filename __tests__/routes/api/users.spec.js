@@ -14,6 +14,8 @@ const usersToken = {
 
 let adminProfile, memberProfile;
 
+const loadSample = (fileName) => path.join(process.cwd(), '__tests__/samples', fileName);
+
 beforeAll(async () => {
   const adminSignIn = await request(app)
     .post(createRoute('api', '/auth/sign-in'))
@@ -47,7 +49,7 @@ beforeAll(async () => {
 
 describe('RESTful-API: Users', () => {
   describe('Get users list', () => {
-    it('test 1: test 1: should return 401 when access token is not provided', async () => {
+    it('test 1: should return 401 when access token is not provided', async () => {
       await request(app).get(createRoute('api', '/users')).expect(401);
     });
 
@@ -222,7 +224,7 @@ describe('RESTful-API: Users', () => {
       expect(typeof response.body.hasNext).toBe('boolean');
     });
 
-    it('test 6: should return 200', async () => {
+    it('test 6: should return 200 when performing a search query without regex', async () => {
       const response = await request(app)
         .get(createRoute('api', '/users'))
         .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
@@ -236,21 +238,7 @@ describe('RESTful-API: Users', () => {
       expect(typeof response.body.hasNext).toBe('boolean');
     });
 
-    it('test 7: should return 200', async () => {
-      const response = await request(app)
-        .get(createRoute('api', '/users'))
-        .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
-        .query({ search: { value: 'admin', regex: true } })
-        .expect(200);
-
-      // Verify the structure of the response body
-      expect(response.body).toHaveProperty('data');
-      expect(Array.isArray(response.body.data)).toBe(true);
-      expect(response.body).toHaveProperty('hasNext');
-      expect(typeof response.body.hasNext).toBe('boolean');
-    });
-
-    it('test 8: should return 200', async () => {
+    it('test 7: should return 200 when performing individual column searching with various conditions', async () => {
       const queryParams = {
         draw: 1,
         columns: [
@@ -345,7 +333,7 @@ describe('RESTful-API: Users', () => {
       expect(typeof response.body.hasNext).toBe('boolean');
     });
 
-    it('test 6: should return 403 when member access token is used to access user list', async () => {
+    it('test 8: should return 403 when member access token is used to access user list', async () => {
       await request(app)
         .get(createRoute('api', '/users'))
         .set('Authorization', `Bearer ${usersToken.memberAccessToken}`)
@@ -366,12 +354,42 @@ describe('RESTful-API: Users', () => {
         .expect(403);
     });
 
-    it('test 3: should return 201 when admin creates a valid user', async () => {
+    it('test 3: should return 400 when username is already taken', async () => {
+      await request(app)
+        .post(createRoute('api', '/users'))
+        .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
+        .send({
+          email: `testuser_${Date.now()}@exzly.dev`,
+          username: 'member',
+          password: 'securepassword',
+          isAdmin: false,
+          gender: 'male',
+          fullName: 'Test User',
+        })
+        .expect(400);
+    });
+
+    it('test 4: should return 400 when email is already in use', async () => {
+      await request(app)
+        .post(createRoute('api', '/users'))
+        .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
+        .send({
+          email: 'member@exzly.dev',
+          username: `testuser_${Date.now()}`,
+          password: 'securepassword',
+          isAdmin: false,
+          gender: 'male',
+          fullName: 'Test User',
+        })
+        .expect(400);
+    });
+
+    it('test 5: should return 201 when admin creates a valid user', async () => {
       const response = await request(app)
         .post(createRoute('api', '/users'))
         .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
         .send({
-          email: `testuser_${Date.now()}@mail.com`,
+          email: `testuser_${Date.now()}@exzly.dev`,
           username: `testuser_${Date.now()}`,
           password: 'securepassword',
           isAdmin: false,
@@ -385,7 +403,7 @@ describe('RESTful-API: Users', () => {
       expect(response.body.username).toContain('testuser');
     });
 
-    it('test 4: should return 400 when required fields are missing', async () => {
+    it('test 6: should return 400 when required fields are missing', async () => {
       await request(app)
         .post(createRoute('api', '/users'))
         .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
@@ -469,7 +487,7 @@ describe('RESTful-API: Users', () => {
         .post(createRoute('api', '/users'))
         .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
         .send({
-          email: `deleteuser_${Date.now()}@mail.com`,
+          email: `deleteuser_${Date.now()}@exzly.dev`,
           username: `deleteuser_${Date.now()}`,
           password: 'securepassword',
           isAdmin: false,
@@ -554,11 +572,10 @@ describe('RESTful-API: Users', () => {
     });
 
     it('test 5: should return 200 when admin uploads a new user profile photo', async () => {
-      const filePath = path.join(__dirname, '200x200.png');
-      const file = fs.createReadStream(filePath);
+      const file = fs.createReadStream(loadSample('exzly-test-200x200.png'));
       await request(app)
         .put(createRoute('api', `/users/profile/1/photo`))
-        .attach('photo', file, '200x200.png')
+        .attach('photo', file, 'exzly-test-200x200.png')
         .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
         .expect(200);
     });
@@ -572,7 +589,7 @@ describe('RESTful-API: Users', () => {
         .post(createRoute('api', '/users'))
         .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
         .send({
-          email: `restoreuser_${Date.now()}@mail.com`,
+          email: `restoreuser_${Date.now()}@exzly.dev`,
           username: `restoreuser_${Date.now()}`,
           password: 'securepassword',
           isAdmin: false,
@@ -628,30 +645,45 @@ describe('RESTful-API: Users', () => {
     });
 
     it('test 3: should return 200 when admin updates member credentials with a new username', async () => {
+      const newEmail = `updated_${Date.now()}@exzly.dev`;
       const newUsername = `updated_${Date.now()}`;
 
       await request(app)
         .put(createRoute('api', `/users/credentials/${memberProfile.id}`))
         .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
-        .send({ username: newUsername })
+        .send({ email: newEmail, username: newUsername })
         .expect(200);
     });
 
-    it('test 4: should return 200 when admin resets member credentials to default username', async () => {
+    it('test 4: should return 200 when admin resets member credentials to default', async () => {
       await request(app)
         .put(createRoute('api', `/users/credentials/${memberProfile.id}`))
         .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
-        .send({ username: 'member' })
+        .send({ email: 'member@exzly.dev', username: 'member' })
         .expect(200);
     });
 
-    it('test 5: should return 200 when admin updates member email address', async () => {
-      const newEmail = 'new-member@exzly.dev';
+    it('test 5: should return 200 when user updates email address or username with their own current email or username', async () => {
+      await request(app)
+        .put(createRoute('api', `/users/credentials/${memberProfile.id}`))
+        .set('Authorization', `Bearer ${usersToken.memberAccessToken}`)
+        .send({ email: 'member@exzly.dev', username: 'member' })
+        .expect(200);
+    });
 
+    it('test 6: should return 400 when member updates email address or username already used by another user', async () => {
+      await request(app)
+        .put(createRoute('api', `/users/credentials/${memberProfile.id}`))
+        .set('Authorization', `Bearer ${usersToken.memberAccessToken}`)
+        .send({ email: 'admin@exzly.dev', username: 'admin' })
+        .expect(400);
+    });
+
+    it('test 7: should return 200 when admin updates email address or username with their own current email or username', async () => {
       await request(app)
         .put(createRoute('api', `/users/credentials/${memberProfile.id}`))
         .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
-        .send({ email: newEmail })
+        .send({ email: 'member@exzly.dev', username: 'member' })
         .expect(200);
     });
   });

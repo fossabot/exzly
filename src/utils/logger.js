@@ -17,7 +17,7 @@ const winstonLogger = winston.createLogger({
   transports: [
     new winston.transports.Console({
       level: 'debug',
-      silent: process.env.NODE_ENV === 'production',
+      silent: process.env.NODE_ENV !== 'development',
     }),
     new winston.transports.DailyRotateFile({
       level: 'error',

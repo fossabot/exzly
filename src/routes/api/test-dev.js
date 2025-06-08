@@ -1,7 +1,7 @@
 const express = require('express');
 const { securityConfig } = require('@exzly-config');
 const { storageMiddleware, authMiddleware } = require('@exzly-middlewares');
-require('@exzly-models');
+const { randomString } = require('@exzly-utils');
 
 const app = express.Router();
 
@@ -31,6 +31,18 @@ app.post(
 );
 
 app.post(
+  '/dynamic-path-memory-storage',
+  storageMiddleware.memoryStorage.single('photo'),
+  storageMiddleware.validateFileMimes(securityConfig.allowedImageMimeTypes),
+  storageMiddleware.saveToDisk(`upload-test//${randomString(10)}/`),
+  (req, res) => {
+    // eslint-disable-next-line no-unused-vars
+    const { buffer, ...fileWithoutBuffer } = req.file;
+    return res.json(fileWithoutBuffer);
+  },
+);
+
+app.post(
   '/single-disk-storage',
   storageMiddleware.diskStorage('test').single('photo'),
   storageMiddleware.validateFileMimes(securityConfig.allowedImageMimeTypes),
@@ -44,7 +56,20 @@ app.post(
   storageMiddleware.diskStorage('test').array('photos'),
   storageMiddleware.validateFileMimes(securityConfig.allowedImageMimeTypes),
   (req, res) => {
+    const hasError = req.files.some((item) => !item.path);
+    if (hasError) {
+      return res.status(207).json(req.files);
+    }
     return res.json(req.files);
+  },
+);
+
+app.post(
+  '/dynamic-path-disk-storage',
+  storageMiddleware.diskStorage(`test//${randomString(10)}/`, 'photo').single('photo'),
+  storageMiddleware.validateFileMimes(securityConfig.allowedImageMimeTypes),
+  (req, res) => {
+    return res.json(req.file);
   },
 );
 

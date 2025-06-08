@@ -92,13 +92,13 @@ const config = {
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
-    '^@exzly-config$': '<rootDir>/src/config',
-    '^@exzly-helpers$': '<rootDir>/src/helpers',
-    '^@exzly-middlewares$': '<rootDir>/src/middlewares',
-    '^@exzly-models$': '<rootDir>/src/models',
-    '^@exzly-routes$': '<rootDir>/src/routes',
-    '^@exzly-utils$': '<rootDir>/src/utils',
-    '^@exzly-validators$': '<rootDir>/src/validators',
+    '^@exzly-config(.*)$': '<rootDir>/src/config$1',
+    '^@exzly-helpers(.*)$': '<rootDir>/src/helpers$1',
+    '^@exzly-middlewares(.*)$': '<rootDir>/src/middlewares$1',
+    '^@exzly-models(.*)$': '<rootDir>/src/models$1',
+    '^@exzly-routes(.*)$': '<rootDir>/src/routes$1',
+    '^@exzly-utils(.*)$': '<rootDir>/src/utils$1',
+    '^@exzly-validators(.*)$': '<rootDir>/src/validators$1',
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader

@@ -38,7 +38,7 @@ const generateUsername = (firstName, lastName) => {
 describe('RESTful-API: Authentication', () => {
   let accessToken, refreshToken;
 
-  describe('Sign up test', () => {
+  describe('Sign up', () => {
     it('test 1: should return 400 when no data is sent', async () => {
       await request(app).post(createRoute('api', '/auth/sign-up')).expect(400);
     });
@@ -65,7 +65,29 @@ describe('RESTful-API: Authentication', () => {
         .expect(400);
     });
 
-    it('test 3: should return 201 when valid registration data is provided', async () => {
+    it('test 3: should return 400 when email is already in use', async () => {
+      const sexType = faker.person.sexType();
+      const firstName = faker.person.firstName(sexType);
+      const lastName = faker.person.lastName(sexType);
+      const fullName = faker.person.fullName({
+        firstName,
+        lastName,
+        sex: sexType,
+      });
+      const email = 'member@exzly.dev';
+
+      await request(app)
+        .post(createRoute('api', '/auth/sign-up'))
+        .send({
+          email,
+          username: 'admin',
+          password: 'password',
+          fullName,
+        })
+        .expect(400);
+    });
+
+    it('test 4: should return 201 when valid registration data is provided', async () => {
       const sexType = faker.person.sexType();
       const firstName = faker.person.firstName(sexType);
       const lastName = faker.person.lastName(sexType);
@@ -102,7 +124,7 @@ describe('RESTful-API: Authentication', () => {
     });
   });
 
-  describe('Sign in test', () => {
+  describe('Sign in', () => {
     it('test 1: should return 401 when password is incorrect', async () => {
       await request(app)
         .post(createRoute('api', '/auth/sign-in'))
@@ -140,7 +162,7 @@ describe('RESTful-API: Authentication', () => {
     });
   });
 
-  describe('Refresh token test', () => {
+  describe('Refresh token', () => {
     it('test 1: should return 400 when no refresh token is sent', async () => {
       await request(app).post(createRoute('api', '/auth/refresh-token')).expect(400);
     });
@@ -160,7 +182,7 @@ describe('RESTful-API: Authentication', () => {
     });
   });
 
-  describe('Forgot password test', () => {
+  describe('Forgot password', () => {
     it('test 1: should return 404 when identity is unknown', async () => {
       await request(app)
         .post(createRoute('api', '/auth/forgot-password'))
@@ -176,7 +198,7 @@ describe('RESTful-API: Authentication', () => {
     });
   });
 
-  describe('Verification test', () => {
+  describe('Verification code', () => {
     it('should return 400 when the verification code is invalid', async () => {
       await request(app)
         .post(createRoute('api', '/auth/verification'))
@@ -185,7 +207,7 @@ describe('RESTful-API: Authentication', () => {
     });
   });
 
-  describe('Reset password test', () => {
+  describe('Reset password', () => {
     it('should return 400 when the reset token is invalid', async () => {
       await request(app)
         .post(createRoute('api', '/auth/reset-password'))
@@ -194,7 +216,7 @@ describe('RESTful-API: Authentication', () => {
     });
   });
 
-  describe('Sign out test', () => {
+  describe('Sign out', () => {
     it('test 1: should return 400 when no refresh token is sent', async () => {
       await request(app).post(createRoute('api', '/auth/sign-out')).expect(400);
     });
@@ -227,7 +249,7 @@ describe('RESTful-API: Authentication - Account recovery', () => {
   const memberUserId = 2;
   let resetPasswordCode, resetPaswordCookie, resetPasswordToken;
 
-  describe('Valid account recovery test', () => {
+  describe('Valid account recovery', () => {
     it('test 1: should return 200 when identity exists', async () => {
       await request(app)
         .post(createRoute('api', '/auth/forgot-password'))
@@ -268,7 +290,7 @@ describe('RESTful-API: Authentication - Account recovery', () => {
     });
   });
 
-  describe('Invalid account recovery test', () => {
+  describe('Invalid account recovery', () => {
     it('test 1: should return 400 when verification code is reused', async () => {
       await request(app)
         .post(createRoute('api', '/auth/verification'))
@@ -283,7 +305,7 @@ describe('RESTful-API: Authentication - Account recovery', () => {
         .expect(400);
     });
 
-    it('test 2: should return 400 when reset-password token is reused', async () => {
+    it('test 3: should return 400 when reset-password token is reused', async () => {
       await request(app)
         .post(createRoute('api', '/auth/reset-password'))
         .send({ token: resetPasswordToken, newPassword: 'member', confirmPassword: 'member' })

@@ -1,6 +1,10 @@
 const request = require('supertest');
+const createHttpError = require('http-errors');
 const app = require('@exzly-routes');
+const webErrorHandler = require('@exzly-routes/web/error');
 const { createRoute } = require('@exzly-utils');
+const { AuthVerifyModel } = require('@exzly-models');
+const { SHA1 } = require('crypto-js');
 
 let adminAuthCookie, memberAuthCookie;
 
@@ -18,7 +22,7 @@ beforeAll(async () => {
 });
 
 describe('Web Routes', () => {
-  describe('Authentication page', () => {
+  describe('Authentication pages', () => {
     it('test 1: should return 200 when accessing home page', async () => {
       await request(app).get(createRoute('web')).expect(200);
     });
@@ -39,18 +43,34 @@ describe('Web Routes', () => {
       await request(app).get(createRoute('web', 'verification')).expect(200);
     });
 
-    it('test 6: should return 400 when accessing verification-code page', async () => {
+    it('test 6: should return 400 when accessing verification page with invalid token', async () => {
       await request(app)
-        .get(createRoute('web', 'verification'))
+        .get(createRoute('web', '/verification'))
         .query({ token: 'invalid' })
         .expect(400);
     });
 
-    it('test 7: should return 400 when accessing verification-code page', async () => {
+    it('test 7: should redirect to reset password page when accessing verification page with valid token', async () => {
       await request(app)
+        .post(createRoute('api', '/auth/forgot-password'))
+        .send({ identity: 'member' })
+        .expect(200);
+
+      const authVerify = await AuthVerifyModel.findOne({
+        where: { userId: 2 },
+        order: [['createdAt', 'DESC']],
+      });
+      const token = SHA1(authVerify.code).toString();
+      const response = await request(app)
         .get(createRoute('web', 'verification'))
-        .query({ token: 'invalid' })
-        .expect(400);
+        .query({ token })
+        .expect(302);
+
+      expect(response.header.location).toBe(createRoute('web', '/reset-password'));
+    });
+
+    it('test 8: should return 200 when accessing test page', async () => {
+      await request(app).get(createRoute('web', '/test')).query({ a: 1, b: 2, c: 3 }).expect(200);
     });
   });
 
@@ -103,6 +123,53 @@ describe('Web Routes', () => {
         .set('Cookie', adminAuthCookie)
         .expect(302);
       expect(response.header.location).toBe(createRoute('web'));
+    });
+
+    it('test 2: should handle generic error (500)', () => {
+      const err = createHttpError(500);
+
+      const req = { user: { id: 1 } };
+      const res = {
+        headersSent: false,
+        status: jest.fn().mockReturnThis(),
+        render: jest.fn(),
+      };
+      const next = jest.fn();
+
+      webErrorHandler(err, req, res, next);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.render).toHaveBeenCalledWith('web/errors/default.njk', { error: err });
+    });
+
+    it('test 3: should render error page with status 500 if headers have not been sent', () => {
+      const err = new Error('Test error');
+      const req = { user: { id: 1 } };
+      const res = {
+        headersSent: false,
+        status: jest.fn().mockReturnThis(),
+        render: jest.fn(),
+      };
+      const next = jest.fn();
+
+      webErrorHandler(err, req, res, next);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.render).toHaveBeenCalledWith('web/errors/default.njk', { error: err });
+    });
+
+    it('test 4: should call next when headers already sent', () => {
+      const err = new Error('Test error');
+      const req = { user: { id: 1 } };
+      const res = {
+        headersSent: true,
+        status: jest.fn().mockReturnThis(),
+        render: jest.fn(),
+      };
+      const next = jest.fn();
+
+      webErrorHandler(err, req, res, next);
+      expect(next).toHaveBeenCalledWith(err);
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.render).not.toHaveBeenCalled();
     });
   });
 });

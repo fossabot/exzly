@@ -1,0 +1,40 @@
+{% extends "test/layout.njk" %}
+
+{% block body %}
+  <table border="1" style="padding: 4px;">
+    <thead>
+      <th>Test name</th>
+      <th>Test result</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Test function <code>getQueryParams()</code></td>
+        <td><code>{{ getQueryParams() | json }}</code></td>
+      </tr>
+      <tr>
+        <td>Test function <code>getQueryParams(['a', 'b'])</code></td>
+        <td><code>{{ getQueryParams(['a', 'b']) | json }}</code></td>
+      </tr>
+      <tr>
+        <td>Test function <code>getQueryParams('a')</code></td>
+        <td><code>{{ getQueryParams('a') }}</code></td>
+      </tr>
+      <tr>
+        <td>Test function <code>uriSegments()</code></td>
+        <td><code>{{ uriSegments() | json }}</code></td>
+      </tr>
+      <tr>
+        <td>Test function <code>uriSegmentMatches('test')</code></td>
+        <td><code>{{ uriSegmentMatches('test') }}</code></td>
+      </tr>
+      <tr>
+        <td>Test function <code>uriSegmentMatches('test', 0)</code></td>
+        <td><code>{{ uriSegmentMatches('test', 0) }}</code></td>
+      </tr>
+      <tr>
+        <td>Test function <code>uriSegmentMatches('test', 1)</code></td>
+        <td><code>{{ uriSegmentMatches('test', 1) }}</code></td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock body %}

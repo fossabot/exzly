@@ -296,13 +296,19 @@ Run all tests:
 npm test
 ```
 
-Run a specific test suite
+Run a specific test suite:
 
 ```bash
 npm test -- <test_suite_name>
 ```
 
-Run test coverage
+To prepare the database specifically for the test environment, run the following command:
+
+```bash
+npm run db:test
+```
+
+Run test coverage:
 
 ```bash
 npm run test:cov
