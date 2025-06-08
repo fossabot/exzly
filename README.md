@@ -5,7 +5,7 @@
 <h1 align="center">Exzly</h1>
 <h4 align="center">Enterprise-Grade Starter Kit for Express.js Monolithic Applications</h4>
 
-[![CI/CD Test and Deploy](https://github.com/agoenks29D/exzly/actions/workflows/ci-cd-test-deploy.yml/badge.svg)](https://github.com/agoenks29D/exzly/actions/workflows/ci-cd-test-deploy.yml)
+[![CI - Setup, Test & Coverage](https://github.com/agoenks29D/exzly/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/agoenks29D/exzly/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/agoenks29D/exzly/graph/badge.svg?token=TO3BEL66OB)](https://codecov.io/gh/agoenks29D/exzly)
 
 ## 📖 Description
