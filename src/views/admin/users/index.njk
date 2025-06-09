@@ -187,7 +187,7 @@ jQuery(() => {
       ],
       drawCallback: function () {
         const api = this.api();
-        $('a[row-option]').on('click', function () {
+        $('#users-table tbody').on('click', 'a[row-option]', function () {
           const row = $(this).attr('row-id');
           const data = api.row(row).data();
           const option = $(this).attr('row-option');
@@ -293,14 +293,14 @@ jQuery(() => {
           </dd>
         </dl>
         <hr>
-        <div class="row">
-          <div class="d-flex col-12 col-sm-4 justify-content-center">
+        <div class="row justify-content-center text-center">
+          <div class="col-auto">
             <a class="btn btn-sm btn-danger" id="delete-user" row-id="${row}">Delete User</a>
           </div>
-          <div class="d-flex col-12 col-sm-4 justify-content-center">
+          <div class="col-auto">
             <a href="{{ adminRoute('/users/profile/${data.id}') }}" class="btn btn-sm btn-info">View Profile</a>
           </div>
-          <div class="d-flex col-12 col-sm-4 justify-content-center">
+          <div class="col-auto">
             <a href="{{ adminRoute('/users/profile/${data.id}/edit') }}" class="btn btn-sm btn-default">Edit Profile</a>
           </div>
         </div>

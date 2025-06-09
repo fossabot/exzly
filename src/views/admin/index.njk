@@ -66,7 +66,7 @@ jQuery(() => {
               : user.photoProfile;
           return `
             <li>
-              <img src="${photoProfile}" style="height:80px;width:80px;" alt="User profile image"><a class="users-list-name" href="#" user-id="${user.id}">${user.fullName}</a>
+              <img src="${photoProfile}" style="height:60px;width:60px;" alt="User profile image"><a class="users-list-name" href="#" user-id="${user.id}">${user.fullName}</a>
               <span class="users-list-date">${moment(user.createdAt).fromNow()}</span>
             </li>
           `;
