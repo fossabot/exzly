@@ -1,6 +1,6 @@
 {% extends "admin/layout.njk" %}
 
-{% block page_title %} {{ httpErrors(error.statusCode).message }} | {{ app_name }} {% endblock page_title %}
+{% block page_title %} {{ httpErrors(statusCode).message }} | {{ app_name }} {% endblock page_title %}
 
 {% block content %}
 <div class="content-wrapper">
@@ -8,12 +8,12 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>{{ error.statusCode ~ ' ' ~ httpErrors(error.statusCode).message }}</h1>
+          <h1>{{ statusCode ~ ' ' ~ httpErrors(statusCode).message }}</h1>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="{{ adminRoute() }}">Home</a></li>
-            <li class="breadcrumb-item active">{{ error.statusCode ~ ' ' ~ httpErrors(error.statusCode).message }}</li>
+            <li class="breadcrumb-item active">{{ statusCode ~ ' ' ~ httpErrors(statusCode).message }}</li>
           </ol>
         </div>
       </div>
@@ -21,15 +21,15 @@
   </section>
   <section class="content">
     <div class="error-page">
-      <h2 class="headline text-danger">{{ error.statusCode }}</h2>
+      <h2 class="headline text-danger">{{ statusCode }}</h2>
       <div class="error-content">
-        <h3><i class="fas fa-exclamation-triangle text-danger"></i> {{ httpErrors(error.statusCode).message }}.</h3>
+        <h3><i class="fas fa-exclamation-triangle text-danger"></i> {{ httpErrors(statusCode).message }}.</h3>
         <p>
           We will work on fixing that right away.
           Meanwhile, you may <a href="{{ adminRoute() }}">return to dashboard</a> or try using the search form.
         </p>
 
-        {% if httpErrors(error.statusCode).message !== error.message %}
+        {% if httpErrors(statusCode).message !== error.message %}
           <code><p>{{ error.message }}</p></code>
         {% endif %}
         <form class="search-form" action="{{ adminRoute('/search') }}">

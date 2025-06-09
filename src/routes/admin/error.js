@@ -28,13 +28,17 @@ module.exports = (err, req, res, next) => {
       const errorView = `admin/errors/${err.status}.njk`;
 
       if (fs.existsSync(path.join(process.cwd(), 'src/views', errorView))) {
-        return res.status(err.status).render(`admin/errors/${err.status}.njk`, { error: err });
+        return res
+          .status(err.status)
+          .render(`admin/errors/${err.status}.njk`, { error: err, statusCode: err.statusCode });
       }
 
-      return res.status(err.status).render(`admin/errors/default.njk`, { error: err });
+      return res
+        .status(err.status)
+        .render(`admin/errors/default.njk`, { error: err, statusCode: err.statusCode });
     }
 
-    return res.status(500).render(`admin/errors/default.njk`, { error: err });
+    return res.status(500).render(`admin/errors/default.njk`, { error: err, statusCode: 500 });
   }
 
   return next(err);
