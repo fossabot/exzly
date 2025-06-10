@@ -125,7 +125,7 @@ describe('Web Routes', () => {
       expect(response.header.location).toBe(createRoute('web'));
     });
 
-    it('test 2: should handle generic error (500)', () => {
+    it('test 7: should handle generic error (500)', () => {
       const err = createHttpError(500);
 
       const req = { user: { id: 1 } };
@@ -138,10 +138,13 @@ describe('Web Routes', () => {
 
       webErrorHandler(err, req, res, next);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.render).toHaveBeenCalledWith('web/errors/default.njk', { error: err });
+      expect(res.render).toHaveBeenCalledWith('web/errors/default.njk', {
+        error: err,
+        statusCode: 500,
+      });
     });
 
-    it('test 3: should render error page with status 500 if headers have not been sent', () => {
+    it('test 8: should render error page with status 500 if headers have not been sent', () => {
       const err = new Error('Test error');
       const req = { user: { id: 1 } };
       const res = {
@@ -153,10 +156,13 @@ describe('Web Routes', () => {
 
       webErrorHandler(err, req, res, next);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.render).toHaveBeenCalledWith('web/errors/default.njk', { error: err });
+      expect(res.render).toHaveBeenCalledWith('web/errors/default.njk', {
+        error: err,
+        statusCode: 500,
+      });
     });
 
-    it('test 4: should call next when headers already sent', () => {
+    it('test 9: should call next when headers already sent', () => {
       const err = new Error('Test error');
       const req = { user: { id: 1 } };
       const res = {

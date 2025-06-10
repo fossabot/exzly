@@ -165,7 +165,10 @@ describe('Admin Routes', () => {
 
       adminErrorHandler(err, req, res, next);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.render).toHaveBeenCalledWith('admin/errors/default.njk', { error: err });
+      expect(res.render).toHaveBeenCalledWith('admin/errors/default.njk', {
+        error: err,
+        statusCode: 500,
+      });
     });
 
     it('test 3: should render error page with status 500 if headers have not been sent', () => {
@@ -180,7 +183,10 @@ describe('Admin Routes', () => {
 
       adminErrorHandler(err, req, res, next);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.render).toHaveBeenCalledWith('admin/errors/default.njk', { error: err });
+      expect(res.render).toHaveBeenCalledWith('admin/errors/default.njk', {
+        error: err,
+        statusCode: 500,
+      });
     });
 
     it('test 4: should call next when headers already sent', () => {
