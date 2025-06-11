@@ -238,7 +238,21 @@ describe('RESTful-API: Users', () => {
       expect(typeof response.body.hasNext).toBe('boolean');
     });
 
-    it('test 7: should return 200 when performing individual column searching with various conditions', async () => {
+    it('test 7: should return 200 when performing a search query with regex', async () => {
+      const response = await request(app)
+        .get(createRoute('api', '/users'))
+        .set('Authorization', `Bearer ${usersToken.adminAccessToken}`)
+        .query({ search: { value: 'admin', regex: true } })
+        .expect(200);
+
+      // Verify the structure of the response body
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
+      expect(response.body).toHaveProperty('hasNext');
+      expect(typeof response.body.hasNext).toBe('boolean');
+    });
+
+    it('test 8: should return 200 when performing individual column searching with various conditions', async () => {
       const queryParams = {
         draw: 1,
         columns: [
@@ -333,7 +347,7 @@ describe('RESTful-API: Users', () => {
       expect(typeof response.body.hasNext).toBe('boolean');
     });
 
-    it('test 8: should return 403 when member access token is used to access user list', async () => {
+    it('test 9: should return 403 when member access token is used to access user list', async () => {
       await request(app)
         .get(createRoute('api', '/users'))
         .set('Authorization', `Bearer ${usersToken.memberAccessToken}`)

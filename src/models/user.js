@@ -1,5 +1,5 @@
+const qs = require('qs');
 const { SHA1 } = require('crypto-js');
-const { matchedData } = require('express-validator');
 const { Model, Op } = require('sequelize');
 
 /**
@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     static dataTablesQuery(req) {
       const order = [];
       const where = {};
-      const reqQuery = matchedData(req, { locations: ['query'] });
+      const reqQuery = qs.parse(req.query);
 
       /**
        * Order query
@@ -39,7 +39,20 @@ module.exports = (sequelize, DataTypes) => {
         const { search } = req.query;
         if (search?.value && search.value.length > 0) {
           if (search?.regex === 'true') {
-            // todo : Search by RegEx
+            Object.assign(where, {
+              [Op.or]: [
+                {
+                  username: {
+                    [Op.regexp]: search.value,
+                  },
+                },
+                {
+                  fullName: {
+                    [Op.regexp]: search.value,
+                  },
+                },
+              ],
+            });
           } else {
             Object.assign(where, {
               [Op.or]: [
@@ -69,7 +82,14 @@ module.exports = (sequelize, DataTypes) => {
             if (Object.hasOwn(column, 'name') && Object.hasOwn(column, 'search')) {
               if (column['search']?.value && column['search'].value.length > 0) {
                 if (column['search']?.regex === 'true') {
-                  // todo : Search by RegEx
+                  const fieldsName = UserModel.getAttributes();
+                  if (Object.keys(fieldsName).indexOf(column['name']) !== -1) {
+                    Object.assign(where, {
+                      [column['name']]: {
+                        [Op.regexp]: column['search'].value,
+                      },
+                    });
+                  }
                 } else {
                   const fieldsName = UserModel.getAttributes();
                   if (Object.keys(fieldsName).indexOf(column['name']) !== -1) {
