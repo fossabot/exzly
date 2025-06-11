@@ -182,6 +182,7 @@ Below is the list of environment variables that need to be configured in the `.e
 | `STORAGE_PATH`       | Path to storage folder                                                                                     | `storage`                         | `secret`                          |
 | `SESSION_SECRET`     | Secret key used for session management                                                                     | `Exzly`                           | `secret`                          |
 | `SESSION_EXPIRATION` | Session expiration time                                                                                    | `4h`                              | `secret`                          |
+| `ASSETS_URL`         | Base URL for serving static assets (useful when using CDN to avoid hardcoding paths)                       | `/`                               | `variable`                        |
 | **HTTPS**            |                                                                                                            |                                   |                                   |
 | `ENABLE_HTTPS`       | Enable or disable HTTPS                                                                                    | `true`                            | `variable`                        |
 | `SSL_KEY_FILE`       | Path to the SSL key file for HTTPS                                                                         | `PATH/TO/SSL_KEY_FILE.key`        | `secret`                          |

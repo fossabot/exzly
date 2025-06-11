@@ -3,8 +3,8 @@
 {% block page_title %} Users | {{ app_name }} {% endblock page_title %}
 
 {% block page_style %}
-<link rel="stylesheet" href="/public/assets/DataTables/datatables.min.css" />
-<link rel="stylesheet" href="/public/assets/Fancyapps/fancybox/fancybox.css" />
+<link rel="stylesheet" href="{{ assetsUrl('/public/assets/DataTables/datatables.min.css') }}" />
+<link rel="stylesheet" href="{{ assetsUrl('/public/assets/Fancyapps/fancybox/fancybox.css') }}" />
 {% endblock page_style %}
 
 {% block content %}
@@ -76,10 +76,10 @@
 {% endblock content %}
 
 {% block page_script %}
-<script src="/public/assets/moment/moment.min.js"></script>
-<script src="/public/assets/moment/moment-timezone-with-data.min.js"></script>
-<script src="/public/assets/DataTables/datatables.min.js"></script>
-<script src="/public/assets/Fancyapps/fancybox/fancybox.umd.js"></script>
+<script src="{{ assetsUrl('/public/assets/moment/moment.min.js') }}"></script>
+<script src="{{ assetsUrl('/public/assets/moment/moment-timezone-with-data.min.js') }}"></script>
+<script src="{{ assetsUrl('/public/assets/DataTables/datatables.min.js') }}"></script>
+<script src="{{ assetsUrl('/public/assets/Fancyapps/fancybox/fancybox.umd.js') }}"></script>
 <script type="text/javascript" nonce="{{ nonce }}">
 jQuery(() => {
   // Fancyapps
@@ -250,14 +250,14 @@ jQuery(() => {
     const photoProfile =
       data.photoProfile !== null
         ? `${data.photoProfile}`
-        : '/public/assets/adminLTE-3.2.0/img/user1-128x128.jpg';
-    const backgroundImage = '/public/assets/adminLTE-3.2.0/img/photo1.png';
+        : "{{ assetsUrl('/public/assets/adminLTE-3.2.0/img/user1-128x128.jpg') }}";
+    const backgroundImage = "{{ assetsUrl('/public/assets/adminLTE-3.2.0/img/photo1.png') }}";
     const html = `
     <div class="card card-widget widget-user widget-user-modal elevation-3" style="border-radius: 1rem;">
       <div class="widget-user-header widget-user-modal-header bg-info" style="background: url('${backgroundImage}') center center;">
         <div class="row pt-2">
           <div class="col-12">
-            <img src="/public/assets/images/x-button.png" class="float-right close"  data-dismiss="modal" aria-label="Close" />
+            <img src="{{ assetsUrl('/public/assets/images/x-button.png') }}" class="float-right close"  data-dismiss="modal" aria-label="Close" />
           </div>
           <div class="col-12">
             <h3 class="widget-user-username text-center">${data.fullName}</h3>

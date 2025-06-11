@@ -62,7 +62,7 @@ jQuery(() => {
         data.map((user) => {
           const photoProfile =
             user.photoProfile === null
-              ? '/public/assets/adminLTE-3.2.0/img/user-placeholder-128x128.png'
+              ? "{{ assetsUrl('/public/assets/adminLTE-3.2.0/img/user-placeholder-128x128.png') }}"
               : user.photoProfile;
           return `
             <li>

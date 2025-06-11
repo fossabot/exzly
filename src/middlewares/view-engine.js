@@ -71,6 +71,10 @@ module.exports = (express) => {
       'isBasePath',
       req.path.split('/').filter((item) => item !== '').length === 1,
     );
+    viewEngine.addGlobal('assetsUrl', (assetPath) => {
+      const assetsURL = process.env.ASSETS_URL || '/';
+      return `${assetsURL}${assetPath}`.replace(/\/{2,}/g, '/');
+    });
 
     /**
      * Custom filter

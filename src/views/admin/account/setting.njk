@@ -3,7 +3,7 @@
 {% block page_title %} Account Setting | {{ app_name }} {% endblock page_title %}
 
 {% block page_style %}
-<link rel="stylesheet" href="/public/assets/cropperjs-1.6.2/cropper.min.css">
+<link rel="stylesheet" href="{{ assetsUrl('/public/assets/cropperjs-1.6.2/cropper.min.css') }}">
 <style type="text/css">
 #crop-image {
   max-width: 100%;
@@ -54,7 +54,7 @@
                     </center>
                     {% else %}
                     <center>
-                      <img src="/public/assets/adminLTE-3.2.0/img/user-placeholder-128x128.png" alt="User image" id="crop-image" class="center">
+                      <img src="{{ assetsUrl('/public/assets/adminLTE-3.2.0/img/user-placeholder-128x128.png') }}" alt="User image" id="crop-image" class="center">
                     </center>
                   {% endif %}
                 </div>
@@ -168,8 +168,8 @@
 {% endblock content %}
 
 {% block page_script %}
-<script src="/public/assets/cropperjs-1.6.2/cropper.min.js"></script>
-<script src="/public/assets/jquery-cropper-1.0.2/jquery-cropper.min.js"></script>
+<script src="{{ assetsUrl('/public/assets/cropperjs-1.6.2/cropper.min.js') }}"></script>
+<script src="{{ assetsUrl('/public/assets/jquery-cropper-1.0.2/jquery-cropper.min.js') }}"></script>
 <script type="text/javascript" nonce="{{ nonce }}">
 jQuery(() => {
   const cropImage = $('#crop-image');

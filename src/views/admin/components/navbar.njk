@@ -16,7 +16,7 @@
         {% if req.user.photoProfile %}
           <img src="{{ req.user.photoProfile }}?height=100&width=100" alt="User Profile Picture" class="img-circle elevation-2 display-user-photoProfile" style="width: 30px; height: 30px; object-fit: cover;">
         {% else %}
-          <img src="/public/assets/adminLTE-3.2.0/img/user-placeholder-128x128.png" alt="User Profile Picture" class="img-circle elevation-2 display-user-photoProfile" style="width: 30px; height: 30px; object-fit: cover;">
+          <img src="{{ assetsUrl('/public/assets/adminLTE-3.2.0/img/user-placeholder-128x128.png') }}" alt="User Profile Picture" class="img-circle elevation-2 display-user-photoProfile" style="width: 30px; height: 30px; object-fit: cover;">
         {% endif %}
         <span class="ml-2 d-none d-md-inline display-user-fullName">{{ req.user.fullName }}</span>
       </a>
