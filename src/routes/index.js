@@ -66,7 +66,16 @@ app.use('/storage/user-photos/:file', fileLoaderMiddleware.imageLoader.diskStora
 if (process.env.NODE_ENV !== 'production') {
   app.use('/storage/:file', fileLoaderMiddleware.imageLoader.diskStorage('test'));
   app.use('/storage/:file', fileLoaderMiddleware.imageLoader.diskStorage('upload-test'));
-  app.get('/test', (req, res) => res.render('test/index'));
+
+  const userData = () => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const data = { id: 1, name: 'Exzly Developers', email: 'developer@exzly.dev' };
+        resolve(data);
+      }, 1000);
+    });
+  };
+  app.get('/test', (req, res) => res.render('test/index', { userData }));
 }
 
 /**
