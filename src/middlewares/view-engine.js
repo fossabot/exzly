@@ -53,6 +53,11 @@ module.exports = (express) => {
     viewEngine.addGlobal('req', req);
     viewEngine.addGlobal('nonce', res.locals.nonce);
     viewEngine.addGlobal('app_name', process.env.APP_NAME);
+    viewEngine.addGlobal('appRoute', {
+      api: process.env.API_ROUTE,
+      web: process.env.WEB_ROUTE,
+      admin: process.env.ADMIN_ROUTE,
+    });
     viewEngine.addGlobal('httpErrors', (code = 500) => {
       return httpErrors[code]();
     });

@@ -55,7 +55,7 @@ const setFormDisabled = (state = true, formElement) => {
 jQuery(() => {
   if (!localStorage.getItem('server-timezone')) {
     $.ajax({
-      url: '/api',
+      url: createRoute('api'),
       method: 'GET',
       success: (response) => {
         localStorage.setItem('server-timezone', response.timezone);
