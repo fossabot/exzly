@@ -42,7 +42,7 @@
 <script type="text/javascript" nonce="{{ nonce }}">
 jQuery(() => {
   $.ajax({
-    url: '/api/users',
+    url: '{{ apiRoute("/users") }}',
     data: {
       size: 8,
       columns: [

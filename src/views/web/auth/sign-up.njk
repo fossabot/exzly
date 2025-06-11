@@ -102,7 +102,7 @@ jQuery(() => {
     const fullName = $('input#fullName').val();
 
     $.ajax({
-      url: '/api/auth/sign-up',
+      url: '{{ apiRoute("/auth/sign-up") }}',
       method: 'POST',
       data: { email, username, password, fullName },
       success: (response) => {

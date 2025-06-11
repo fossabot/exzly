@@ -231,7 +231,7 @@ jQuery(() => {
       formData.append('photo', blob, 'profile.png');
 
       $.ajax({
-        url: '/api/users/profile/{{ user.id }}/photo',
+        url: '{{ apiRoute("/users/profile/" ~ user.id ~ "/photo") }}',
         method: 'PUT',
         data: formData,
         processData: false,
@@ -273,7 +273,7 @@ jQuery(() => {
 
     $.ajax({
       method: 'PUT',
-      url: '/api/users/profile/{{ user.id }}',
+      url: '{{ apiRoute("/users/profile/" ~ user.id) }}',
       data: { gender, fullName },
       success: () => {
         SwalToast('top-end', 2000).fire({
@@ -323,7 +323,7 @@ jQuery(() => {
 
     $.ajax({
       method: 'PUT',
-      url: '/api/users/credentials/{{ user.id }}',
+      url: '{{ apiRoute("/users/credentials/" ~ user.id) }}',
       data: { email, username, newPassword, confirmPassword },
       success: () => {
         $('#user-newPassword').val('');

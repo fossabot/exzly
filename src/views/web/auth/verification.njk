@@ -53,7 +53,7 @@ jQuery(() => {
     const code = $('input#code').val();
 
     $.ajax({
-      url: '/api/auth/verification',
+      url: '{{ apiRoute("/auth/verification") }}',
       method: 'POST',
       data: { code },
       success: (response) => {

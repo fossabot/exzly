@@ -112,7 +112,7 @@ jQuery(() => {
       },
       dom: '<"top"<"row"<"col-12 col-md-4 mb-2"l><"col-12 col-md-4 mb-2" B><"col-12 col-md-4 mb-2"f>>>t<"bottom"<"row"<"col-6 mt-3"i><"col-6 mt-3"p>>><"clear">',
       ajax: {
-        url: '/api/users',
+        url: '{{ apiRoute("/users") }}',
         type: 'GET',
         async: true,
         dataSrc: 'data',
@@ -339,7 +339,7 @@ jQuery(() => {
       confirmButtonText: 'Yes, do it!',
       preConfirm: () => {
         return $.ajax({
-          url: `/api/users/profile/${data.id}?in-trash=${inTrash}`,
+          url: `{{ apiRoute("/users/profile/") }}${data.id}?in-trash=${inTrash}`,
           type: 'DELETE',
           success: () => true,
           error: (xhr) => {
@@ -384,7 +384,7 @@ jQuery(() => {
       confirmButtonText: 'Yes, do it!',
       preConfirm: () => {
         return $.ajax({
-          url: `/api/users/profile/${data.id}`,
+          url: `{{ apiRoute("/users/profile/") }}${data.id}`,
           type: 'PATCH',
           success: () => true,
           error: (xhr) => {

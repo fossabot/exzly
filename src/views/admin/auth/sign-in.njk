@@ -60,7 +60,7 @@ jQuery(() => {
     const password = $('input#password').val();
 
     $.ajax({
-      url: '/api/auth/sign-in',
+      url: '{{ apiRoute("/auth/sign-in") }}',
       method: 'POST',
       data: { identity, password },
       success: (response) => {
