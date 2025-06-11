@@ -5,8 +5,12 @@
 <h1 align="center">Exzly</h1>
 <h4 align="center">Enterprise-Grade Starter Kit for Express.js Monolithic Applications</h4>
 
+![GitHub Release](https://img.shields.io/github/v/release/agoenks29D/exzly)
+![GitHub License](https://img.shields.io/github/license/agoenks29D/exzly)
+![GitHub Code Size](https://img.shields.io/github/languages/code-size/agoenks29D/exzly)
+
 [![CI - Setup, Test & Coverage](https://github.com/agoenks29D/exzly/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/agoenks29D/exzly/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/agoenks29D/exzly/graph/badge.svg?token=TO3BEL66OB)](https://codecov.io/gh/agoenks29D/exzly)
+![Codecov](https://img.shields.io/codecov/c/github/agoenks29D/exzly)
 
 ## 📖 Description
 
