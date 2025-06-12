@@ -33,6 +33,28 @@
 <body class="hold-transition login-page">
 {% block content %}{% endblock content %}
 </body>
+<script type="text/javascript" nonce="{{ nonce }}">
+const createRoute = (routeName, routePath = '') => {
+  let route;
+  const appRoute = JSON.parse('{{ appRoute | json }}');
+
+  switch (routeName) {
+    case 'web':
+      route = appRoute.web + routePath;
+      break;
+
+    case 'api':
+      route = appRoute.api + routePath;
+      break;
+
+    case 'admin':
+      route = appRoute.admin + routePath;
+      break;
+  }
+
+  return route.replace(/\/{2,}/g, '/');
+};
+</script>
 <script src="{{ assetsUrl('/public/assets/adminLTE-3.2.0/plugins/jquery/jquery.min.js') }}"></script>
 <script src="{{ assetsUrl('/public/assets/adminLTE-3.2.0/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ assetsUrl('/public/assets/adminLTE-3.2.0/js/adminlte.min.js') }}"></script>
